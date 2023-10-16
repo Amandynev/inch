@@ -1,0 +1,6 @@
+<span>Import des personnes</span>
+
+<%= form_with url: import_people_path, method: :post do |form|%>
+<%= form.file_field :file, accept: '.csv' %>
+<%= form.button "Importer"%>
+<% end %>
