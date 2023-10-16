@@ -10,8 +10,8 @@ class PeopleController < ApplicationController
   end
 
   def update
-    if @person.update(person_params)
-      redirect_to @person, notice: 'La personne a bien été ajouté.'
+    if person.update(person_params)
+      redirect_to person, notice: 'La personne a bien été ajouté.'
     else
       render :edit
     end
@@ -35,7 +35,7 @@ class PeopleController < ApplicationController
   private
 
   def person
-    @person ||= Person.find params[:id]
+    @person ||= Person.find params[:id] || params[:person_id]
   end
 
   def import_file_params

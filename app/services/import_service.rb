@@ -5,14 +5,10 @@ class ImportService
 
     begin
       csv = CSV.parse(file.open, headers: true, col_sep: col_sep)
-
-
       csv.each do |row|
-
         object = create_or_update_model_klass(model_class, import_fields, row)
 
         if object.save
-          binding.b
           results[:success] += 1
         else
           results[:failure] += 1
@@ -27,8 +23,9 @@ class ImportService
     end
   end
 
+  private
+
   def self.create_or_update_model_klass(model_class, import_fields, row)
-    binding.b
     selected_fields = selected_attributes(model_class)
     object = model_class.find_or_initialize_by(selected_fields.map { |field| [field, row[field]] }.to_h)
 
