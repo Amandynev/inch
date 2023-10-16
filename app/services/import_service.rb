@@ -1,16 +1,18 @@
 class ImportService
-  def import(file, model_class, import_fields, col_sep = ';')
+
+  def self.import(file, model_class, import_fields, col_sep = ';')
     results = { success: 0, failure: 0, errors: [] }
 
     begin
       csv = CSV.parse(file.open, headers: true, col_sep: col_sep)
 
-      csv.each do |row|
-        object = model_class.find_or_initialize_by(import_fields.map { |field| [field, row[field]] }.to_h)
 
-        import_fields.each { |field| object.send("#{field}=", row[field]) }
+      csv.each do |row|
+
+        object = create_or_update_model_klass(model_class, import_fields, row)
 
         if object.save
+          binding.b
           results[:success] += 1
         else
           results[:failure] += 1
@@ -20,7 +22,26 @@ class ImportService
 
       results
     rescue StandardError => e
+      puts puts "An error occurred: #{e.message}"
       { success: 0, failure: 0, errors: [e.message] }
+    end
+  end
+
+  def self.create_or_update_model_klass(model_class, import_fields, row)
+    binding.b
+    selected_fields = selected_attributes(model_class)
+    object = model_class.find_or_initialize_by(selected_fields.map { |field| [field, row[field]] }.to_h)
+
+    import_fields.each do |field|
+      object.send("#{field}=", row[field])
+    end
+  end
+
+  def self.selected_attributes(model_class)
+    if model_class == 'Person'
+      ['email','home_phone_number','mobile_phone_number', 'address']
+    else
+      ['manager_name']
     end
   end
 end
