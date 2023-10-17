@@ -48,5 +48,4 @@ class BuildingsController < ApplicationController
       :address,
     )
   end
-
 end
