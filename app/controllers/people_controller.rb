@@ -1,4 +1,3 @@
-require 'csv'
 class PeopleController < ApplicationController
 
   def index
@@ -11,16 +10,17 @@ class PeopleController < ApplicationController
 
   def update
     if person.update(person_params)
-      redirect_to person, notice: 'La personne a bien été ajouté.'
+      redirect_to person, notice: 'La personne a bien été ajoutée.'
     else
-      render :edit
+      flash.now[:alert] = "La mise à jour a échoué veuillez recommencer"
     end
   end
 
   def import
     file = import_file_params
+
     return render status: 400, json: { message: 'Invalid import template' } unless file.present? && file.content_type == 'text/csv'
-    binding.b
+
     import_name = Person
     import = ImportService.import(file, import_name, Person::HEADERS)
 

@@ -1,5 +1,3 @@
-require 'csv'
-
 class BuildingsController < ApplicationController
 
   def index
