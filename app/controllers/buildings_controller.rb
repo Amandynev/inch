@@ -17,7 +17,6 @@ class BuildingsController < ApplicationController
     return render status: 400, json: { message: 'Invalid import template' } unless file.present? && file.content_type == 'text/csv'
 
     import_name = Building
-
     import = ImportService.import(file, import_name, Building::HEADERS)
 
     if import[:success] > 0

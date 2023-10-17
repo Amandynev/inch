@@ -2,18 +2,16 @@ require 'csv'
 
 class ImportService
   class << self
+
     def import(file, model_class, import_fields, col_sep = ';')
       results = { success: 0, failure: 0, errors: [] }
 
       begin
         csv = CSV.parse(file.open, headers: true, col_sep: col_sep)
-
         csv.each do |row|
-
           create_or_update_model_klass(model_class, import_fields, row)
 
           if @object.save
-
             results[:success] += 1
           else
             results[:failure] += 1
