@@ -1,0 +1,7 @@
+<span>Listes des personnes</span>
+
+<% @people.each do |person|%>
+<%= person.reference%>
+<%= person.lastname %>
+<%= person.firstname %>
+<% end %>
