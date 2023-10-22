@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Building model
 class Building < ApplicationRecord
   HEADERS = %w[
     reference

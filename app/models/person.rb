@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Person model
 class Person < ApplicationRecord
   HEADERS = %w[
     reference

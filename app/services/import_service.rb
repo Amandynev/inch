@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'csv'
-
+# Service to import data
 class ImportService
   class << self
     def import(file, model_class, import_fields, col_sep = ';')

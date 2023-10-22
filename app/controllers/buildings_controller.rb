@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# building controller
 class BuildingsController < ApplicationController
   def index
     @buildings = Building.all

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# PersonAudit model
 class PersonAudit < ApplicationRecord
   validates_uniqueness_of :email
   validates_uniqueness_of :home_phone_number
