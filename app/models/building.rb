@@ -1,4 +1,5 @@
 class Building < ApplicationRecord
+
   HEADERS = %w[
     reference
     address
@@ -7,4 +8,5 @@ class Building < ApplicationRecord
     country
     manager_name
   ]
+
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Person < ApplicationRecord
 
   HEADERS = %w[
@@ -9,5 +11,4 @@ class Person < ApplicationRecord
     mobile_phone_number
     address
   ]
-
 end

@@ -10,7 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_10_195437) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_18_155730) do
+  create_table "building_audits", force: :cascade do |t|
+    t.string "manager_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "buildings", force: :cascade do |t|
     t.string "reference"
     t.string "address"
@@ -32,6 +38,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_10_195437) do
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "person_audits", force: :cascade do |t|
+    t.integer "person_id"
+    t.string "email"
+    t.string "home_phone_number"
+    t.string "mobile_phone_number"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_id"], name: "index_person_audits_on_person_id"
   end
 
 end

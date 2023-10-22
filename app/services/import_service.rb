@@ -9,8 +9,7 @@ class ImportService
       begin
         csv = CSV.parse(file.open, headers: true, col_sep: col_sep)
         csv.each do |row|
-          create_or_update_model_klass(model_class, import_fields, row)
-
+          create_and_track_model_klass(model_class, import_fields, row)
           if @object.save
             results[:success] += 1
           else
@@ -28,22 +27,102 @@ class ImportService
 
     private
 
-    def create_or_update_model_klass(model_class, import_fields, row)
-      selected_fields = selected_attributes(model_class)
-      @object = model_class.find_or_initialize_by(selected_fields.map { |field| [field, row[field]] }.to_h)
+    def create_and_track_model_klass(model_class, import_fields, row)
+      if model_class == Person
+        @object = Person.new
+      else
+        @object = Building.new
+      end
 
       import_fields.each do |field|
         @object.send("#{field}=", row[field])
+        track_history_changes(@object, field, row[field], model_class)
       end
 
     end
 
-    def selected_attributes(model_class)
+    def create_person(attribute_name, new_value)
+      binding.b
+      case attribute_name
+        when 'reference'
+          @object.reference = new_value
+        when 'lastname'
+          @object.address = new_value
+        when 'firstname'
+          @object.zip_code = new_value
+        when 'email'
+          @object.email = @history.email
+        when 'home_phone_number'
+          @object.home_phone_number = @history.home_phone_number
+        when 'mobile_phone_number'
+          @object.mobile_phone_number = @history.mobile_phone_number
+        when 'address'
+          @object.address = @history.address
+      end
+      binding.b
+    end
+
+    def create_building(attribute_name, new_value)
+      case attribute_name
+        when 'reference'
+          @object.reference = new_value
+        when 'address'
+          @object.address = new_value
+        when 'zip_code'
+          @object.zip_code = new_value
+        when 'city'
+          @object.city = new_value
+        when 'country'
+          @object.country = new_value
+        when 'manager_name'
+          @object.manager_name = @history.manager_name
+      end
+    end
+
+    def create_person_audit(attribute_name, new_value)
+      if @history.respond_to?(attribute_name)
+        if @history.public_send(attribute_name) != new_value
+          @history.public_send("#{attribute_name}=", new_value)
+
+          if @history.valid?
+            @history.save
+
+            create_person(attribute_name, new_value)
+          end
+        end
+      end
+    end
+
+    def create_building_audit(attribute_name, new_value)
+      if @history.respond_to?(attribute_name)
+        if @history.public_send(attribute_name) != new_value
+          @history.public_send("#{attribute_name}=", new_value)
+          if @history.valid?
+           @history.save
+
+           create_building(attribute_name, new_value)
+          end
+        end
+      end
+    end
+
+    def track_history_changes(object, attribute_name, new_value, model_class)
       if model_class == Person
-        ['email','home_phone_number','mobile_phone_number', 'address']
+        excluding_attribute_name = [ 'reference', 'lastname', 'firstname' ]
+
+        return if excluding_attribute_name.include?(attribute_name)
+        @history = PersonAudit.find_or_initialize_by("#{attribute_name}": new_value)
+
+        create_person_audit(attribute_name, new_value)
       else
-        ['manager_name']
+        excluding_attribute_name = [ 'reference', 'address', 'zip_code', 'city', 'country']
+
+        return if excluding_attribute_name.include?(attribute_name)
+        @history = BuildingAudit.find_or_initialize_by("#{attribute_name}": attribute_name)
+
+        create_building_audit(attribute_name, new_value)
       end
     end
+
   end
 end
