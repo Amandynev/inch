@@ -1,5 +1,7 @@
-class PeopleController < ApplicationController
+# frozen_string_literal: true
 
+# people controller
+class PeopleController < ApplicationController
   def index
     @people = Person.all
   end
@@ -12,19 +14,22 @@ class PeopleController < ApplicationController
     if person.update(person_params)
       redirect_to person, notice: 'La personne a bien été ajoutée.'
     else
-      flash.now[:alert] = "La mise à jour a échoué veuillez recommencer"
+      flash.now[:alert] = 'La mise à jour a échoué veuillez recommencer'
     end
   end
 
   def import
     file = import_file_params
 
-    return render status: 400, json: { message: 'Invalid import template' } unless file.present? && file.content_type == 'text/csv'
+    unless file.present? && file.content_type == 'text/csv'
+      return render status: 400,
+                    json: { message: 'Invalid import template' }
+    end
 
     import_name = Person
     import = ImportService.import(file, import_name, Person::HEADERS)
 
-    if import[:success] > 0
+    if (import[:success]).positive?
       redirect_to people_path, notice: "L'import est terminé avec succès. #{import[:success]} enregistrements importés."
     else
       flash.now[:alert] = "L'import a échoué. #{import[:failure]} enregistrements en erreur."
@@ -50,7 +55,7 @@ class PeopleController < ApplicationController
       :email,
       :home_phone_number,
       :mobile_phone_number,
-      :address,
+      :address
     )
   end
 end

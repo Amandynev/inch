@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Building model
 class Building < ApplicationRecord
   HEADERS = %w[
     reference
@@ -6,5 +9,5 @@ class Building < ApplicationRecord
     city
     country
     manager_name
-  ]
+  ].freeze
 end

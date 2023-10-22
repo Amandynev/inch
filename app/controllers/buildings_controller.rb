@@ -1,5 +1,7 @@
-class BuildingsController < ApplicationController
+# frozen_string_literal: true
 
+# building controller
+class BuildingsController < ApplicationController
   def index
     @buildings = Building.all
   end
@@ -14,13 +16,17 @@ class BuildingsController < ApplicationController
 
   def import
     file = import_file_params
-    return render status: 400, json: { message: 'Invalid import template' } unless file.present? && file.content_type == 'text/csv'
+    unless file.present? && file.content_type == 'text/csv'
+      return render status: 400,
+                    json: { message: 'Invalid import template' }
+    end
 
     import_name = Building
     import = ImportService.import(file, import_name, Building::HEADERS)
 
-    if import[:success] > 0
-      redirect_to buildings_path, notice: "L'import est terminé avec succès. #{import[:success]} enregistrements importés."
+    if (import[:success]).positive?
+      redirect_to buildings_path,
+                  notice: "L'import est terminé avec succès. #{import[:success]} enregistrements importés."
     else
       redirect_to new_building_path, notice: "L'import a échoué. #{import[:failure]} enregistrements en erreur."
     end
@@ -44,7 +50,7 @@ class BuildingsController < ApplicationController
       :country,
       :manager_name,
       :zip_code,
-      :address,
+      :address
     )
   end
 end
