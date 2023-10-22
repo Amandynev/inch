@@ -29,15 +29,20 @@ class ImportService
     private
 
     def create_and_track_model_klass(model_class, import_fields, row)
-      @object = if model_class == Person
-                  Person.new
-                else
-                  Building.new
-                end
+      selected_fields = selected_attributes(model_class)
+      @object = model_class.find_or_initialize_by(selected_fields.map { |field| [field, row[field]] }.to_h)
 
       import_fields.each do |field|
         @object.send("#{field}=", row[field])
         track_history_changes(@object, field, row[field], model_class)
+      end
+    end
+
+    def selected_attributes(model_class)
+      if model_class == Person
+        ['email','home_phone_number','mobile_phone_number', 'address']
+      else
+        ['manager_name']
       end
     end
 
