@@ -11,10 +11,31 @@ class PeopleController < ApplicationController
   end
 
   def update
-    if person.update(person_params)
-      redirect_to person, notice: 'La personne a bien été ajoutée.'
+    valid_params = person_params.select do |key, _value|
+      PersonAudit.column_names.include?(key)
+    end
+
+    if PersonAudit.where(valid_params).exists?
+        person.reference = person_params[:reference]
+        person.lastname = person_params[:lastname]
+        person.firstname = person_params[:firstname]
+        person.email = valid_params.email
+        person.home_phone_number = valid_params.home_phone_number
+        person.mobile_phone_number = valid_params.mobile_phone_number
+        person.address = valid_params.address
+        person.save
+        redirect_to person, notice: 'La personne a bien été ajoutée.'
+      end
+
     else
-      flash.now[:alert] = 'La mise à jour a échoué veuillez recommencer'
+
+      PersonAudit.create(valid_params)
+      if person.update(person_params)
+        redirect_to person, notice: 'La personne a bien été ajoutée.'
+      else
+        flash.now[:alert] = 'La mise à jour a échoué veuillez recommencer'
+      end
+
     end
   end
 

@@ -7,10 +7,31 @@ class BuildingsController < ApplicationController
   end
 
   def update
-    if building.update(building_params)
-      redirect_to building, notice: 'La personne a bien été ajouté.'
+    valid_params = building_params.select do |key, _value|
+      BuildingAudit.column_names.include?(key)
+    end
+
+    if BuildingAudit.where(valid_params).exists?
+        building.reference = building_params[:reference]
+        building.lastname = building_params[:lastname]
+        building.firstname = building_params[:firstname]
+        building.email = valid_params.email
+        building.home_phone_number = valid_params.home_phone_number
+        building.mobile_phone_number = valid_params.mobile_phone_number
+        building.address = valid_params.address
+        building.save
+        redirect_to building, notice: "L'immeuble' a bien été ajoutée."
+      end
+
     else
-      render :edit
+
+      buildingAudit.create(valid_params)
+      if building.update(building_params)
+        redirect_to building, notice: "L'immeuble'a bien été ajoutée."
+      else
+        flash.now[:alert] = "La mise à jour a échoué veuillez recommencer"
+      end
+
     end
   end
 
