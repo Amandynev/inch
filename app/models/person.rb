@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Person < ApplicationRecord
-
   HEADERS = %w[
     reference
     lastname
@@ -10,5 +9,5 @@ class Person < ApplicationRecord
     home_phone_number
     mobile_phone_number
     address
-  ]
+  ].freeze
 end

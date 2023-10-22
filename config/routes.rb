@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
-  root "people#index"
+  root 'people#index'
 
-  resources :people, only: [:index,:new, :update] do
+  resources :people, only: %i[index new update] do
     collection do
       post :import
     end
   end
 
-  resources :buildings, only: [:index, :new, :update] do
+  resources :buildings, only: %i[index new update] do
     collection do
       post :import
     end

@@ -1,5 +1,6 @@
-class Building < ApplicationRecord
+# frozen_string_literal: true
 
+class Building < ApplicationRecord
   HEADERS = %w[
     reference
     address
@@ -7,6 +8,5 @@ class Building < ApplicationRecord
     city
     country
     manager_name
-  ]
-
+  ].freeze
 end
